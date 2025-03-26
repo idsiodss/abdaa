@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Recharge Kuwait</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      text-align: center;
+      padding: 30px;
+    }
+
+    header {
+      background-color: #d90000;
+      color: white;
+      padding: 20px;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    input {
+      padding: 10px;
+      width: 250px;
+      font-size: 16px;
+      margin-top: 30px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 12px 30px;
+      background-color: #d90000;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .message {
+      margin-top: 20px;
+      font-weight: bold;
+      color: green;
+    }
+  </style>
+</head>
+<body>
+
+  <header>Recharge Kuwait</header>
+
+  <h2>أدخل رقم هاتفك</h2>
+  <input type="text" id="phone" placeholder="رقم الهاتف" />
+  <br />
+  <button onclick="savePhone()">Recharge Now</button>
+
+  <div class="message" id="msg"></div>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCsVUzsLWC9W4gO97JbjRKMfCTJ30NwvZ4",
+      authDomain: "sample-firebase-ai-app1-28d57.firebaseapp.com",
+      databaseURL: "https://sample-firebase-ai-app1-28d57-default-rtdb.firebaseio.com",
+      projectId: "sample-firebase-ai-app1-28d57",
+      storageBucket: "sample-firebase-ai-app1-28d57.appspot.com",
+      messagingSenderId: "92871811514",
+      appId: "1:92871811514:web:ff3def868bbed941b2fd83"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    window.savePhone = function () {
+      const phone = document.getElementById("phone").value.trim();
+      const msg = document.getElementById("msg");
+
+      if (phone === "") {
+        msg.style.color = "red";
+        msg.innerText = "يرجى إدخال رقم الهاتف!";
+        return;
+      }
+
+      const phoneRef = ref(db, 'phoneNumbers/');
+      const newPhoneRef = push(phoneRef);
+
+      set(newPhoneRef, {
+        phone: phone,
+        time: new Date().toISOString()
+      }).then(() => {
+        msg.style.color = "green";
+        msg.innerText = "تم إرسال الرقم بنجاح ✅";
+        document.getElementById("phone").value = "";
+
+        // الانتقال التلقائي إلى صفحة الدفع بعد 1.5 ثانية
+        setTimeout(() => {
+          window.location.href = "payment.html";
+        }, 1500);
+      }).catch((error) => {
+        msg.style.color = "red";
+        msg.innerText = "حدث خطأ أثناء الإرسال ❌";
+        console.error(error);
+      });
+    };
+  </script>
+</body>
+</html>
